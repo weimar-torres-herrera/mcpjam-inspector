@@ -265,17 +265,21 @@ describe("ServerPicker — connection state", () => {
     ).toBeNull();
   });
 
-  it("falls back the DOT the same way the label falls back", async () => {
-    // The runtime value is a plain string widened with `as ConnectionStatus`,
-    // so a value outside the union reaches here. The helper's own fallback
-    // answers "Disconnected" for both halves at once; reading the word and
-    // the colour from two places is how they came to disagree.
-    mockState.runtime = { alpha: { connectionStatus: "reticulating" } };
+  it("makes no claim about a status it cannot read, and offers no Connect", async () => {
+    // Runtime hands us a plain string. This test used to assert the CAST's
+    // behaviour — "Disconnected", grey, with a Connect button — which is a
+    // claim about a server whose state we could not read at all.
+    // `beta` is connected so the only Connect that could appear is `alpha`'s.
+    mockState.runtime = {
+      alpha: { connectionStatus: "reticulating" },
+      beta: { connectionStatus: "connected" },
+    };
     open();
 
     const dot = await screen.findByTestId("server-status-dot-srv_1");
-    expect(dot).toHaveAccessibleName("Disconnected");
-    expect(dot).toHaveClass("bg-muted-foreground");
+    expect(dot).toHaveAccessibleName("Connection state unavailable");
+    expect(dot).toHaveClass("bg-transparent");
+    expect(screen.queryByRole("button", { name: /^Connect$/ })).toBeNull();
   });
 
   it("holds the row's alignment without a colour when the state is unknown", async () => {
@@ -1498,6 +1502,32 @@ describe("ServerPicker — one failure, one message", () => {
     expect((toast.error as any).mock.calls[0][0]).not.toMatch(
       /server group named/i,
     );
+  });
+});
+
+describe("ServerPicker — a create that landed but whose commit failed", () => {
+  it("does not ask the panel to keep a draft whose row was already written", async () => {
+    // Rethrowing here reads as "keep the draft", and the next Create mints a
+    // second group for a row that already exists.
+    mockState.createSpy = vi.fn().mockResolvedValue({ _id: "att_new" });
+    const onChange = vi.fn().mockRejectedValue(new Error("commit failed"));
+    render(<ServerPicker projectId="p_1" value={null} onChange={onChange} />);
+    fireEvent.click(screen.getByTestId("server-picker-trigger"));
+    await userEvent.click(
+      await screen.findByRole("tab", { name: "Server Groups" }),
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: /Create new group/ }),
+    );
+    await userEvent.click(await screen.findByLabelText("alpha"));
+    await userEvent.click(screen.getByRole("button", { name: /^Create$/ }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    // The form is gone: the row landed, so there is nothing to retry.
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Group name")).toBeNull(),
+    );
+    expect(mockState.createSpy).toHaveBeenCalledTimes(1);
   });
 });
 

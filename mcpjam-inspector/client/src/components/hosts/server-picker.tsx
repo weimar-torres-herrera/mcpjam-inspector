@@ -27,8 +27,8 @@ import { useServerActionsOptional } from "@/state/server-actions-context";
 import {
   UNKNOWN_CONNECTION_STATUS,
   getConnectionStatusMeta,
+  isConnectionStatus,
 } from "@/components/connection/server-card-utils";
-import type { ConnectionStatus } from "@/state/app-types";
 import type { EvalServerAttachment } from "@/components/evals/types";
 
 import { deriveServerGroupName } from "./server-group-name";
@@ -353,8 +353,12 @@ export function ServerPicker({
           server.name,
           runtime,
         );
+        // `isConnectionStatus`, not a cast: runtime hands us a plain string,
+        // and one outside the union is a state we cannot READ. The cast made
+        // it "Disconnected" with a Connect button — the same claim the strip
+        // and the cards already refuse to make.
         const connectionStatus =
-          status === null ? null : (status as ConnectionStatus);
+          status !== null && isConnectionStatus(status) ? status : null;
         // Both halves come from the one helper the server cards and the
         // header strip also read, so a status cannot be worded one way here
         // and painted another there. Narrowed to the two fields the panel's
@@ -372,7 +376,7 @@ export function ServerPicker({
               }
             : UNKNOWN_CONNECTION_STATUS,
           onConnect:
-            canConnect && actions
+            canConnect && connectionStatus !== null && actions
               ? () => void handleConnect(server.name)
               : undefined,
         };
@@ -558,7 +562,10 @@ export function ServerPicker({
             ? `A server group named "${name}" already exists.`
             : raw || "Failed to create server group",
         );
-        throw err;
+        // Only when the row did NOT land. The panel reads a rejection as
+        // "keep the draft", so rethrowing after a successful write leaves a
+        // filled form whose next Create mints a duplicate.
+        if (!wrote) throw err;
       } finally {
         setCreating(false);
         writing.current = false;

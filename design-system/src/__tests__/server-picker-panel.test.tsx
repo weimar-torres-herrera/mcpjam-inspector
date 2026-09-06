@@ -160,6 +160,27 @@ describe("ServerPickerPanel — Servers tab", () => {
   });
 });
 
+describe("the create form and an unanswered catalog", () => {
+  it("does not open with nothing to tick", () => {
+    render(
+      <ServerPickerPanel
+        {...panelProps()}
+        tab="groups"
+        servers={[]}
+        catalogKnown={false}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /Create new group/ })).toBeDisabled();
+  });
+
+  it("opens once the catalog answers", () => {
+    render(<ServerPickerPanel {...panelProps()} tab="groups" />);
+    expect(
+      screen.getByRole("button", { name: /Create new group/ }),
+    ).toBeEnabled();
+  });
+});
+
 describe("ServerPickerPanel — no synthetic 'none' row", () => {
   it("offers no Client default row on either tab", () => {
     // Not in the design: with nothing selected the client's own default already

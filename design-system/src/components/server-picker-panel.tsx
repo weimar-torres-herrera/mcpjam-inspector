@@ -418,7 +418,9 @@ export function ServerPickerPanel({
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            disabled={busy}
+            // Also while the catalog is unknown: the form would open with no
+            // servers to tick and a name derived from nothing.
+            disabled={busy || !catalogKnown}
             className={cn(ROW, "text-sm hover:bg-accent disabled:opacity-50")}
           >
             <Plus className="size-3.5 shrink-0 text-muted-foreground" />

@@ -20,10 +20,11 @@ import { describe, expect, it } from "vitest";
  * and a template literal in a prop desynced the depth. None of that is a
  * question worth answering twice — the parser answers it.
  *
- * SCOPE, because a ratchet that overstates itself is worse than none: this
- * only sees files that render `<DialogContent` THEMSELVES. A picker whose
- * overlay comes from a wrapper in another file passes unexamined. Closing that
- * needs the render tree, not the syntax tree.
+ * SCOPE, because a ratchet that overstates itself is worse than none: a
+ * picker whose overlay comes from a wrapper in ANOTHER file passes
+ * unexamined. Closing that needs the render tree, not the syntax tree. What
+ * is checked is nesting inside a `<DialogContent>` written in the same file —
+ * the shape that actually regressed.
  */
 const CLIENT_SRC = join(__dirname, "..", "..", "..");
 
@@ -44,10 +45,23 @@ function portalOff(element: ts.JsxOpeningLikeElement): boolean {
   return /^\{\s*(?:true|inModal)\s*\}$/.test(attr.initializer.getText());
 }
 
-/** Every `<ServerPicker>` in a file, with the one fact this test cares about. */
+/** Is this element nested inside a `<DialogContent>`? */
+function insideDialog(node: ts.Node): boolean {
+  for (let n = node.parent; n; n = n.parent) {
+    if (
+      ts.isJsxElement(n) &&
+      n.openingElement.tagName.getText() === "DialogContent"
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Every `<ServerPicker>` in a file, with the two facts this test cares about. */
 export function serverPickers(
   source: string,
-): { text: string; portalOff: boolean }[] {
+): { text: string; portalOff: boolean; inDialog: boolean }[] {
   const tree = ts.createSourceFile(
     "f.tsx",
     source,
@@ -55,14 +69,18 @@ export function serverPickers(
     true,
     ts.ScriptKind.TSX,
   );
-  const found: { text: string; portalOff: boolean }[] = [];
+  const found: { text: string; portalOff: boolean; inDialog: boolean }[] = [];
   const visit = (node: ts.Node) => {
     if (
       (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) &&
       // `ServerPickerPanel` is a different component with no such prop.
       node.tagName.getText() === "ServerPicker"
     ) {
-      found.push({ text: node.getText(), portalOff: portalOff(node) });
+      found.push({
+        text: node.getText(),
+        portalOff: portalOff(node),
+        inDialog: insideDialog(node),
+      });
     }
     ts.forEachChild(node, visit);
   };
@@ -79,10 +97,12 @@ describe("ServerPicker inside a modal Dialog", () => {
       if (!file.endsWith(".tsx") || file.includes("__tests__")) continue;
       const source = readFileSync(join(CLIENT_SRC, file), "utf8");
       if (!source.includes("<ServerPicker")) continue;
-      if (!source.includes("<DialogContent")) continue;
 
       for (const picker of serverPickers(source)) {
-        if (!picker.portalOff) offenders.push(file);
+        // Nested inside the dialog, not merely sharing a file with one. The
+        // text version asked the second question, so a correctly portalled
+        // picker beside an unrelated Dialog failed the suite.
+        if (picker.inDialog && !picker.portalOff) offenders.push(file);
       }
     }
 
@@ -92,6 +112,21 @@ describe("ServerPicker inside a modal Dialog", () => {
 
 describe("what the scan above actually matches", () => {
   const first = (source: string) => serverPickers(source)[0];
+
+  it("only judges a picker actually nested in a dialog", () => {
+    const src = `
+      <>
+        <Dialog><DialogContent><ServerPicker inModal /></DialogContent></Dialog>
+        <ServerPicker projectId={id} />
+      </>
+    `;
+    const [inside, outside] = serverPickers(src);
+    expect(inside.inDialog).toBe(true);
+    // Shares the file with a Dialog, but is not in it — portalling is correct
+    // here, and flagging it would fail a suite over working code.
+    expect(outside.inDialog).toBe(false);
+    expect(outside.portalOff).toBe(false);
+  });
 
   it("does not mistake ServerPickerPanel for the picker", () => {
     expect(
