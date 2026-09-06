@@ -1,0 +1,28 @@
+design-system/src/components/server-picker-panel.tsx
+  s_8fcd0fe3ab55af::t_d4479b6c53eca4 275-278
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-in-modal-contract.test.ts
+  s_8fcd0fe3ab55af::t_d4479b6c53eca4 91-103
+mcpjam-inspector/client/src/components/hosts/server-picker.tsx
+  s_8fcd0fe3ab55af::t_ebcbc6f143b0df 225,234-235
+  s_8fcd0fe3ab55af::t_0d1e3e87ac1931 515,518,667,674,715,718
+  s_8fcd0fe3ab55af::t_7f6ac1a4a4152a 69-71,420-484,533-537,540-545,594,596,600-602,604-609
+  s_8fcd0fe3ab55af::t_638fba264af011 162-166,168-172,208-223
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker.test.tsx
+  s_8fcd0fe3ab55af::t_ce30837863e5e4 460-478
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "4471cddb10a07b5b2835e01924e2b7e6b48af683",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
