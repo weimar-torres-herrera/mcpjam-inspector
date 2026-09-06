@@ -1,0 +1,25 @@
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-inventory.test.ts
+  s_8fcd0fe3ab55af::t_94225538b469b6 1-3,7,24-33,37-39,41,88-90,92-116,119-122,125-130,134,136-138,176
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-in-modal-contract.test.ts
+  s_8fcd0fe3ab55af::t_ead20e850e9ba0 1-3,7,16-22,26,31,33-36,38-44,47-56,58-65,67-71,77-80,84-85,93-95,97-99,103-112,115-120,123-127,130-136,139-149
+mcpjam-inspector/client/src/hooks/useViews.ts
+  s_8fcd0fe3ab55af::t_8cbd65995e7fc4 6-21,210,212,270
+mcpjam-inspector/client/src/components/connection/ServerConnectionCard.tsx
+  s_8fcd0fe3ab55af::t_8cbd65995e7fc4 216-224,228-229
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "d27af6ba8b09b84ef306f7c1f41d1204868dab51",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
