@@ -351,10 +351,6 @@ function EnvironmentModeBar({
           value={state}
           onChange={(next) => void commit(next)}
           maxTargets={MAX_SUITE_ENVIRONMENTS}
-          // `onUpdateServerAttachment` takes an id, not `id | null`, so there
-          // is nothing to commit a clear to — and the create form gates submit
-          // on the same field.
-          serverOptional={false}
           slots={
             omitComputers
               ? EVALS_COMPOSER_SLOTS.filter((slot) => slot !== "computers")

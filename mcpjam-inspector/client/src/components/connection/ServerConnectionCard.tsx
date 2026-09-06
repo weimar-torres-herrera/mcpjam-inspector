@@ -213,11 +213,6 @@ export function ServerConnectionCard({
    * the same claim as "not connected" — and the helper's fallback makes the
    * second one. Same distinction the header strip and the picker draw.
    */
-  /**
-   * A status outside the union means we cannot READ the state, which is not
-   * the same claim as "not connected" — and the helper's fallback makes the
-   * second one. Same distinction the header strip and the picker draw.
-   */
   const known = isConnectionStatus(server.connectionStatus);
   const meta = getConnectionStatusMeta(
     known ? server.connectionStatus : "disconnected",

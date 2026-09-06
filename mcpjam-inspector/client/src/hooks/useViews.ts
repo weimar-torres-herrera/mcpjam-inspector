@@ -13,10 +13,16 @@ import { shouldQueryProjectId, type RemoteServer } from "./useProjects";
  */
 function queryWillRunLater(
   isAuthenticated: boolean,
+  authLoading: boolean,
   isUserReady: boolean,
   projectId: string | null,
 ): boolean {
-  return isAuthenticated && !isUserReady && shouldQueryProjectId(projectId);
+  if (!shouldQueryProjectId(projectId)) return false;
+  // Auth still resolving reads as signed OUT, so without this the first
+  // renders of a signed-in session call the skipped query's empty list an
+  // answer — the same defect one layer further out.
+  if (authLoading) return true;
+  return isAuthenticated && !isUserReady;
 }
 
 // Type definitions matching backend
@@ -191,9 +197,12 @@ export function useViewMutations() {
 // Hook to get servers for a project (for server ID resolution)
 export function useProjectServers({
   isAuthenticated,
+  authLoading = false,
   projectId,
 }: {
   isAuthenticated: boolean;
+  /** Convex auth has not settled yet. Optional: absent means it has. */
+  authLoading?: boolean;
   projectId: string | null;
 }) {
   const isUserReady = useDbUserReady();
@@ -209,7 +218,7 @@ export function useProjectServers({
   const isLoading = enableQuery && servers === undefined;
   /** Told apart by the hook that owns the skip, not by every caller. */
   const isBootstrapping =
-    queryWillRunLater(isAuthenticated, isUserReady, projectId);
+    queryWillRunLater(isAuthenticated, authLoading, isUserReady, projectId);
 
   // Create a map for quick lookup by name
   const serversByName = useMemo(() => {
@@ -242,9 +251,12 @@ export function useProjectServers({
 
 export function useProjectServerAttachments({
   isAuthenticated,
+  authLoading = false,
   projectId,
 }: {
   isAuthenticated: boolean;
+  /** Convex auth has not settled yet. Optional: absent means it has. */
+  authLoading?: boolean;
   projectId: string | null;
 }) {
   const isUserReady = useDbUserReady();
@@ -267,7 +279,7 @@ export function useProjectServerAttachments({
   const isLoading = enableQuery && serverAttachments === undefined;
   /** See `useProjectServers`: a skipped query is not an answer. */
   const isBootstrapping =
-    queryWillRunLater(isAuthenticated, isUserReady, projectId);
+    queryWillRunLater(isAuthenticated, authLoading, isUserReady, projectId);
 
   return {
     serverAttachments: serverAttachments ?? [],

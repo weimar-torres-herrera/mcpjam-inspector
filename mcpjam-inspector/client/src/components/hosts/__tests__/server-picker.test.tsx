@@ -454,6 +454,34 @@ describe("ServerPicker — Connect reports what to fix", () => {
 });
 
 describe("ServerPicker — switching projects", () => {
+  it("refuses a write that completes after a round trip away and back", async () => {
+    // The id alone cannot see this: leaving p_1 for p_2 and returning makes a
+    // stale completion's project match again, so it would record a row and
+    // report a selection the user made two screens ago.
+    let release: (v: unknown) => void = () => {};
+    mockState.createSpy = vi.fn(
+      () => new Promise((r) => (release = r)),
+    );
+    const onChange = vi.fn();
+    const { rerender } = render(
+      <ServerPicker projectId="p_1" value={null} onChange={onChange} />,
+    );
+    fireEvent.click(screen.getByTestId("server-picker-trigger"));
+    fireEvent.click(await screen.findByText("alpha"));
+    await waitFor(() => expect(mockState.createSpy).toHaveBeenCalledTimes(1));
+
+    rerender(<ServerPicker projectId="p_2" value={null} onChange={onChange} />);
+    rerender(<ServerPicker projectId="p_1" value={null} onChange={onChange} />);
+
+    release({ _id: "att_new" });
+    await waitFor(() => expect(mockState.createSpy).toHaveBeenCalledTimes(1));
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByTestId("server-picker-trigger")).toHaveTextContent(
+      "Select server",
+    );
+  });
+
   it("does not carry a pending row into the next project", async () => {
     // The overlay holds rows the query has not listed yet. Those belong to the
     // project they were written in: carried across, the old project's minted

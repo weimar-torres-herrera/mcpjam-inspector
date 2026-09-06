@@ -102,17 +102,24 @@ export function ServerPicker({
   inModal = false,
   triggerTestId,
 }: ServerPickerProps) {
-  const { isAuthenticated } = useConvexAuth();
+  const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
+  /**
+   * Trimmed ONCE, and used for everything downstream. The hooks query on the
+   * trimmed id, so an overlay keyed on the raw prop is discarded by a caller
+   * that only changed the padding — hiding the selected row and letting a
+   * duplicate be minted against a project the query never left.
+   */
+  const project = projectId.trim();
   const {
     serverAttachments,
     isLoading: attachmentsLoading,
     isBootstrapping: attachmentsBootstrapping,
-  } = useProjectServerAttachments({ isAuthenticated, projectId });
+  } = useProjectServerAttachments({ isAuthenticated, authLoading, projectId: project });
   const {
     servers: catalogRows,
     isLoading: catalogLoading,
     isBootstrapping: catalogBootstrapping,
-  } = useProjectServers({ isAuthenticated, projectId });
+  } = useProjectServers({ isAuthenticated, authLoading, projectId: project });
   const appState = useOptionalSharedAppState();
   const actions = useServerActionsOptional();
   const createServerAttachment = useMutation(
@@ -138,18 +145,24 @@ export function ServerPicker({
 
   /** The overlay, but only when it belongs to the project being rendered. */
   const pending =
-    storedPending.projectId === projectId ? storedPending : NO_PENDING;
+    storedPending.projectId === project ? storedPending : NO_PENDING;
 
   /**
-   * The project a completing write must still be looking at.
+   * What a completing write must still be looking at.
    *
-   * `projectId` inside a handler is the value captured when the click
-   * happened; this is the value NOW. A write that lands after the user has
-   * switched projects belongs to a screen they have left, so it must not
-   * report a selection or reopen anything here.
+   * A GENERATION, not the project id: leaving A for B and coming back makes a
+   * stale completion's id match again, and it would then report a selection
+   * the user made two screens ago. The counter only ever goes up, so a write
+   * that started in an earlier visit can never look current.
    */
-  const currentProject = useRef(projectId);
-  currentProject.current = projectId;
+  const generation = useRef(0);
+  const lastProject = useRef(project);
+  if (lastProject.current !== project) {
+    lastProject.current = project;
+    generation.current += 1;
+  }
+  const startedAt = generation.current;
+  const stillCurrent = () => generation.current === startedAt;
 
   /**
    * A SAME-TICK backstop for `busy`, and deliberately nothing more.
@@ -282,13 +295,13 @@ export function ServerPicker({
       // Same identity when nothing changed, so React bails out of the render
       // rather than looping on `serverAttachments`, which is a fresh array
       // every time until the query settles.
-      if (prev.projectId !== projectId) return prev;
+      if (prev.projectId !== project) return prev;
       return added.length === prev.added.length &&
         removed.length === prev.removed.length
         ? prev
         : { ...prev, added, removed };
     });
-  }, [serverAttachments, attachmentsKnown, pending, projectId]);
+  }, [serverAttachments, attachmentsKnown, pending, project]);
 
   /**
    * The one deadline, and only for a written row the query never lists.
@@ -407,7 +420,7 @@ export function ServerPicker({
           setCreating(true);
           try {
             await onChange(existing._id, existing as EvalServerAttachment);
-            setOpen(false);
+            if (stillCurrent()) setOpen(false);
           } catch (err) {
             const raw = err instanceof Error ? err.message : "";
             toast.error(raw || `Couldn't select ${existing.name}`);
@@ -432,7 +445,7 @@ export function ServerPicker({
             attachments.map((a) => a.name ?? ""),
           );
           const result = (await createServerAttachment({
-            projectId,
+            projectId: project,
             name,
             serverIds: [serverId],
           })) as { _id: string };
@@ -443,16 +456,16 @@ export function ServerPicker({
             serverIds: [serverId],
             resolvedServerNames: [server.name],
           };
-          if (currentProject.current !== projectId) return;
+          if (!stillCurrent()) return;
           setPending((prev) => ({
-            projectId,
-            removed: prev.projectId === projectId ? prev.removed : [],
+            projectId: project,
+            removed: prev.projectId === project ? prev.removed : [],
             added:
-              prev.projectId === projectId ? [...prev.added, created] : [created],
+              prev.projectId === project ? [...prev.added, created] : [created],
           }));
           // Awaited for the same reason as the group path.
           await onChange(result._id, created);
-          setOpen(false);
+          if (stillCurrent()) setOpen(false);
         } catch (err) {
           const raw = err instanceof Error ? err.message : "";
           toast.error(
@@ -474,7 +487,7 @@ export function ServerPicker({
       createServerAttachment,
       creating,
       onChange,
-      projectId,
+      project,
     ],
   );
 
@@ -511,7 +524,7 @@ export function ServerPicker({
       let wrote = false;
       try {
         const result = (await createServerAttachment({
-          projectId,
+          projectId: project,
           name,
           serverIds,
         })) as { _id: string };
@@ -526,18 +539,18 @@ export function ServerPicker({
           // gap shifts every later name onto the wrong id.
           resolvedServerNames: serverIds.map((id) => byId.get(id) ?? ""),
         };
-        if (currentProject.current !== projectId) return;
+        if (!stillCurrent()) return;
         setPending((prev) => ({
-          projectId,
-          removed: prev.projectId === projectId ? prev.removed : [],
+          projectId: project,
+          removed: prev.projectId === project ? prev.removed : [],
           added:
-            prev.projectId === projectId ? [...prev.added, created] : [created],
+            prev.projectId === project ? [...prev.added, created] : [created],
         }));
         // Awaited: `onChange` is typed `=> void`, but bivariance lets a caller
         // pass an async commit — the suite bar passes an awaited `updateSuite`
         // — and an un-awaited rejection escapes this catch entirely.
         await onChange(result._id, created);
-        setOpen(false);
+        if (stillCurrent()) setOpen(false);
       } catch (err) {
         const raw = err instanceof Error ? err.message : "";
         toast.error(
@@ -551,7 +564,7 @@ export function ServerPicker({
         writing.current = false;
       }
     },
-    [attachmentsKnown, catalog, createServerAttachment, onChange, projectId],
+    [attachmentsKnown, catalog, createServerAttachment, onChange, project],
   );
 
   /**
@@ -609,12 +622,12 @@ export function ServerPicker({
         // deleted in one sitting was never in the query to begin with) and
         // record it in `removed` (a row the query still returns would
         // otherwise sit on the tab, and stay clickable, until the refetch).
-        if (currentProject.current !== projectId) return;
+        if (!stillCurrent()) return;
         setPending((prev) => {
-          const mine = prev.projectId === projectId;
+          const mine = prev.projectId === project;
           const removed = mine ? prev.removed : [];
           return {
-            projectId,
+            projectId: project,
             added: mine
               ? prev.added.filter((row) => row._id !== groupId)
               : [],
@@ -632,7 +645,7 @@ export function ServerPicker({
         writing.current = false;
       }
     },
-    [creating, deleteServerAttachment, onClearSelection, projectId, value],
+    [creating, deleteServerAttachment, onClearSelection, project, value],
   );
 
   /**
@@ -652,7 +665,7 @@ export function ServerPicker({
       setCreating(true);
       try {
         await onChange(group._id, group as EvalServerAttachment);
-        setOpen(false);
+        if (stillCurrent()) setOpen(false);
       } catch (err) {
         const raw = err instanceof Error ? err.message : "";
         toast.error(raw || `Couldn't select ${group.name}`);
