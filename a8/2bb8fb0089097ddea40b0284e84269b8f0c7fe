@@ -1,0 +1,29 @@
+design-system/src/components/server-picker-panel.tsx
+  s_8fcd0fe3ab55af::t_050f7178b166e2 421-423
+design-system/src/__tests__/server-picker-panel.test.tsx
+  s_8fcd0fe3ab55af::t_35104f7e2660ce 163-166,168-176,178-183
+  s_8fcd0fe3ab55af::t_1df4763ed49f58 167,177
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker.test.tsx
+  s_8fcd0fe3ab55af::t_35104f7e2660ce 268-271,280-282,1508-1530
+  s_8fcd0fe3ab55af::t_1d0df4c76a35f8 272-276
+mcpjam-inspector/client/src/components/hosts/server-picker.tsx
+  s_8fcd0fe3ab55af::t_050f7178b166e2 30,356-359,361,379,565-568
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-in-modal-contract.test.ts
+  s_8fcd0fe3ab55af::t_14451704fd98fa 23-27,48-61,64,72,79-83,102-105,116-129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a82bb8fb0089097ddea40b0284e84269b8f0c7fe",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
