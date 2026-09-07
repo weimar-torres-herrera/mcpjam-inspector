@@ -1,0 +1,30 @@
+.playwright-mcp/console-2026-09-07T02-58-25-209Z.log
+  s_8fcd0fe3ab55af::t_94c6c374b5ca8c 64
+  s_8fcd0fe3ab55af::t_4f4ca46044ed99 56-61
+  s_8fcd0fe3ab55af::t_a8f32cfa0aee3b 6
+  s_8fcd0fe3ab55af::t_149c594536d904 63
+mcpjam-inspector/client/src/components/hosts/server-picker.tsx
+  s_8fcd0fe3ab55af::t_ea99cf18dc6f1b 194-205
+design-system/src/__tests__/server-picker-panel.test.tsx
+  s_8fcd0fe3ab55af::t_4f4ca46044ed99 207-210,216,218-225,231,233-271
+  s_8fcd0fe3ab55af::t_41738a5bb7ea66 279
+design-system/src/components/server-picker-panel.tsx
+  s_8fcd0fe3ab55af::t_41738a5bb7ea66 94,101,152,390-403
+  s_8fcd0fe3ab55af::t_2564ac5cb4fccc 205-208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "6018934113f57a5fe301a6a3d390ce6086662c2b",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
