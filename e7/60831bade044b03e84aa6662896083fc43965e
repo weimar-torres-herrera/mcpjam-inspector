@@ -1,0 +1,23 @@
+design-system/src/__tests__/server-picker-panel.test.tsx
+  s_8fcd0fe3ab55af::t_fba1b93c6c57a2 282-302
+  s_8fcd0fe3ab55af::t_15ecfceea26793 281
+design-system/src/components/server-picker-panel.tsx
+  s_8fcd0fe3ab55af::t_1b50e78f851c74 118-125,133-134
+  s_8fcd0fe3ab55af::t_b114067d65647b 130-132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "e760831bade044b03e84aa6662896083fc43965e",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
