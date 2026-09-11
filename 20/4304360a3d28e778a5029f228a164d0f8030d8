@@ -1,0 +1,11 @@
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-reentrancy.test.tsx
+  ai_agent 76,167-200
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker.test.tsx
+  ai_agent 82,2108,2157,2174,2191,2222-2274
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "204304360a3d28e778a5029f228a164d0f8030d8",
+  "prompts": {}
+}
