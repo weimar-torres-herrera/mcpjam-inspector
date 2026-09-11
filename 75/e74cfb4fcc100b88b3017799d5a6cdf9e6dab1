@@ -1,0 +1,41 @@
+mcpjam-inspector/client/src/components/hosts/server-picker.tsx
+  s_8fcd0fe3ab55af::t_dfc30bdadc6ddd 115,329-332,575-577,610,614-617,694-696
+  s_8fcd0fe3ab55af::t_8c2d7e9512c2c8 147-149,154-156,165-166,308-309,318-319,598-599,627-628,636-637,647-648
+  s_8fcd0fe3ab55af::t_2e39fbea1d6757 169-172,175-176,179-181,195-197,202-204,207-208,235-237,242-243
+  s_8fcd0fe3ab55af::t_34b83487c9a889 285-290,419,421-424,428-429
+  s_8fcd0fe3ab55af::t_e88f04b0d7cbb2 2,4-6,58,61-63,72,86,88,91,94-96
+mcpjam-inspector/client/src/components/hosts/server-picker-model.ts
+  s_8fcd0fe3ab55af::t_76307fb068f119 2,12,16,31-32,41,43,48,55,77,98,106-108
+design-system/src/components/server-picker-panel.tsx
+  s_8fcd0fe3ab55af::t_fe37915dbceaea 2-5,23,25,49,52-53,76-78,88,93-96,98-99,108-110,154-155,369-371
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-inventory.test.ts
+  s_8fcd0fe3ab55af::t_f2d0cfdf990e3e 8-14,16-18,20-23
+  s_8fcd0fe3ab55af::t_9e9684acd3ef25 71,121,137
+mcpjam-inspector/client/src/components/hosts/__tests__/support/client-tsx.ts
+  s_8fcd0fe3ab55af::t_a4e7ea41609802 6-7,23
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-in-modal-contract.test.ts
+  s_8fcd0fe3ab55af::t_f2d0cfdf990e3e 8-11,13-14,16-18
+  s_8fcd0fe3ab55af::t_9e9684acd3ef25 21-23,72-73,105,130,144,152
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-reentrancy.test.tsx
+  s_8fcd0fe3ab55af::t_a4e7ea41609802 5-6,8-11,13-15,67-68,89,132,159
+design-system/src/__tests__/server-picker-panel.test.tsx
+  s_8fcd0fe3ab55af::t_6fe817503be994 2-4,8-9
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker.test.tsx
+  s_8fcd0fe3ab55af::t_6fe817503be994 1216-1219,1887-1890,1954-1956
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "75e74cfb4fcc100b88b3017799d5a6cdf9e6dab1",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
