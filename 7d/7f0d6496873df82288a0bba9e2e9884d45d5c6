@@ -1,0 +1,24 @@
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker-reentrancy.test.tsx
+  s_8fcd0fe3ab55af::t_da50ddc8f85183 1-172
+design-system/src/__tests__/server-picker-panel.test.tsx
+  s_8fcd0fe3ab55af::t_5e128b0339b45e 166-177,179,186-187
+  s_8fcd0fe3ab55af::t_4693b88eb370bd 188
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker.test.tsx
+  s_8fcd0fe3ab55af::t_d274ac34af4a89 1500-1507
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "7d7f0d6496873df82288a0bba9e2e9884d45d5c6",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
