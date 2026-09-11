@@ -1,0 +1,25 @@
+mcpjam-inspector/client/src/components/hosts/server-picker.tsx
+  s_8fcd0fe3ab55af::t_82351a7407a6df 180-181,443-444,448,498,527,554,557,593,612-615,674,678-681,699,703
+  ai_agent 178-179
+mcpjam-inspector/client/src/components/hosts/__tests__/server-picker.test.tsx
+  s_8fcd0fe3ab55af::t_855d282029f060 2059-2060,2071-2094,2096-2114,2117-2134,2136-2139,2165-2175,2177-2192,2194-2226,2228-2231
+  s_8fcd0fe3ab55af::t_f21f754205173e 2061,2064-2070,2135,2176,2193,2227
+  ai_agent 2062-2063,2095,2115-2116,2141-2142
+  s_8fcd0fe3ab55af::t_8bd04845110734 2140,2143-2164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "68534c525af153178754985b39443cc080841675",
+  "prompts": {},
+  "sessions": {
+    "s_8fcd0fe3ab55af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2f83805-2e0e-4874-8fc3-e44ed74700d9",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "weimar-torres-herrera <weimar.torres.herrera@gmail.com>"
+    }
+  }
+}
